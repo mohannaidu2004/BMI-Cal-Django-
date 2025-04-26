@@ -1,0 +1,194 @@
+{% extends "bmi_app/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Animated Card -->
+            <div class="bmi-card animate__animated animate__fadeInUp animate__faster">
+                <div class="card-header gradient-bg">
+                    <h2 class="mb-0 text-white"><i class="fas fa-calculator me-2"></i> BMI Calculator</h2>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Floating Form -->
+                    <form id="bmiForm" method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Name Field with Floating Label -->
+                        <div class="form-floating mb-4">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required>
+                            <label for="name"><i class="fas fa-user me-2"></i> Your Name</label>
+                            <div class="invalid-feedback animate__animated animate__headShake">
+                                Please enter your name
+                            </div>
+                        </div>
+                        
+                        <!-- Email Field with Floating Label -->
+                        <div class="form-floating mb-4">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com" required>
+                            <label for="email"><i class="fas fa-envelope me-2"></i> Email Address</label>
+                            <div class="invalid-feedback animate__animated animate__headShake">
+                                Please enter a valid email
+                            </div>
+                        </div>
+                        
+                        <!-- Height/Weight Row -->
+                        <div class="row g-3 mb-4">
+                            <!-- Height Field -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="height" name="height" 
+                                           placeholder="170" min="100" max="300" step="0.1" required>
+                                    <label for="height"><i class="fas fa-ruler-vertical me-2"></i> Height (cm)</label>
+                                </div>
+                            </div>
+                            
+                            <!-- Weight Field -->
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="weight" name="weight" 
+                                           placeholder="70" min="20" max="500" step="0.1" required>
+                                    <label for="weight"><i class="fas fa-weight me-2"></i> Weight (kg)</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button with Animation -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-calculate btn-lg rounded-pill pulse">
+                                <span class="submit-text">
+                                    <i class="fas fa-calculator me-2"></i> Calculate BMI
+                                </span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Animated Info Section -->
+            <div class="text-center mt-4 animate__animated animate__fadeIn animate__delay-1s">
+                <img src="https://cdn-icons-png.flaticon.com/512/9340/9340025.png" class="floating" width="150" height="150" alt="Health Icon">
+                <h5 class="mt-3">Know Your Body Mass Index</h5>
+                <p class="text-muted">BMI is a measure of body fat based on height and weight</p>
+                <p class="text-muted">contact: mohannaidu2004@gmail.com</p>
+                <p class="text-muted">© <span id="year"></span> BMI Calculator. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* Gradient Background for Header */
+    .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Text Gradient Effect */
+    .text-gradient {
+        background: linear-gradient(to right, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    /* Form Input Styling */
+    .form-control {
+        border-radius: 0.5rem;
+        border: 2px solid #e9ecef;
+        transition: all 0.1s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+    
+    /* Floating Label Animation */
+    .form-floating label {
+        transition: all 0.2s ease;
+    }
+    
+    /* Button Styling */
+    .btn-calculate {
+        background: linear-gradient(to right, #667eea, #764ba2);
+        border: none;
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-calculate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Health Icon Animation */
+    .health-icon {
+        display: inline-block;
+        animation: heartbeat 1.5s infinite;
+    }
+    
+    /* Custom Animations */
+    @keyframes heartbeat {
+        0% { transform: scale(1); }
+        25% { transform: scale(1.1); }
+        50% { transform: scale(1); }
+        75% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes floating {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+</style>
+
+<!-- Form Validation Script -->
+<script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('bmiForm');
+        
+        form.addEventListener('submit', function(e) {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Add shake animation to invalid fields
+                document.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+                
+                document.querySelectorAll(':invalid').forEach(el => {
+                    el.classList.add('is-invalid');
+                    el.parentElement.querySelector('.invalid-feedback').style.display = 'block';
+                });
+            } else {
+                // Show loading state
+                const btn = form.querySelector('button[type="submit"]');
+                btn.querySelector('.submit-text').classList.add('d-none');
+                btn.querySelector('.spinner-border').classList.remove('d-none');
+                btn.disabled = true;
+            }
+            
+            form.classList.add('was-validated');
+        }, false);
+        
+        // Remove validation on input
+        form.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.classList.remove('is-invalid');
+                    this.parentElement.querySelector('.invalid-feedback').style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

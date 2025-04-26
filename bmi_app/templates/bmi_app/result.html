@@ -1,0 +1,115 @@
+{% extends "bmi_app/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Result Card with Animation -->
+            <div class="bmi-card animate__animated animate__zoomIn">
+                <!-- Updated Card Header with Matching Gradient -->
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2 class="mb-0 text-white"><i class="fas fa-chart-line me-2"></i> Your BMI Results</h2>
+                </div>
+                
+                <div class="card-body p-4 text-center">
+                    <!-- Greeting Section -->
+                    <div class="mb-4 animate__animated animate__fadeIn">
+                        <h3 class="text-gradient">Hello, {{ name }}!</h3>
+                        <p class="text-muted">Here's your personalized health analysis</p>
+                    </div>
+                    
+                    <!-- BMI Result Display -->
+                    <div class="result-container p-4 mb-4 bg-white rounded animate__animated animate__fadeInUp">
+                        <div class="bmi-value-display mb-3">
+                            <div class="bmi-value animate__animated animate__pulse animate__infinite animate__slower">
+                                {{ bmi }}
+                            </div>
+                            <div class="bmi-category fw-bold text-uppercase mt-2">
+                                {{ category }}
+                            </div>
+                        </div>
+                        
+                        <!-- BMI Scale Visualization -->
+                        <div class="bmi-scale mt-4">
+                            <div class="progress" style="height: 12px; border-radius: 6px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: 0%" 
+                                     aria-valuenow="{{ bmi }}" 
+                                     aria-valuemin="10" 
+                                     aria-valuemax="50"></div>
+                            </div>
+                            
+                            <div class="scale-labels d-flex justify-content-between mt-2">
+                                <small class="text-muted">Underweight<br>&lt; 18.5</small>
+                                <small class="text-muted">Normal<br>18.5 - 24.9</small>
+                                <small class="text-muted">Overweight<br>25 - 29.9</small>
+                                <small class="text-muted">Obese<br>&gt; 30</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Health Recommendation -->
+                    <div class="health-tip p-3 mb-4 rounded animate__animated animate__fadeIn animate__delay-1s"
+                         style="background-color: #f8f9fa; border-left: 4px solid #667eea;">
+                        <h5><i class="fas fa-heartbeat me-2 text-danger"></i> Health Tip</h5>
+                        {% if bmi < 18.5 %}
+                        <p class="mb-0">Consider consulting a nutritionist for healthy weight gain strategies.</p>
+                        {% elif bmi < 25 %}
+                        <p class="mb-0">Great job! Maintain your healthy lifestyle with balanced nutrition.</p>
+                        {% elif bmi < 30 %}
+                        <p class="mb-0">Regular exercise and portion control can help improve your health.</p>
+                        {% else %}
+                        <p class="mb-0">Consult a healthcare provider for personalized weight management advice.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Email Status -->
+                   <!-- Add this to your result.html template -->
+<div class="alert {% if email_sent %}alert-success{% else %}alert-danger{% endif %} mt-4">
+    <h5><i class="fas {% if email_sent %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-2"></i>
+        {% if email_sent %}Report Sent Successfully{% else %}Email Delivery Failed{% endif %}
+    </h5>
+    <p class="mb-1">Attempted to send to: <strong>{{ email_address }}</strong></p>
+    {% if not email_sent %}
+    <p class="mb-0 small">Please check your email address or try again later.</p>
+    {% endif %}
+</div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'bmi_app:home' %}" 
+                           class="btn btn-lg rounded-pill" 
+                           style="background: linear-gradient(to right, #667eea, #764ba2); color: white;">
+                            <i class="fas fa-redo me-2"></i> Calculate Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Animation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate the progress bar
+        const bmi = parseFloat("{{ bmi }}");
+        let progressValue = 0;
+        
+        if(bmi < 18.5) {
+            progressValue = (bmi / 18.5) * 25;
+        } else if(bmi < 25) {
+            progressValue = 25 + ((bmi - 18.5) / (25 - 18.5)) * 25;
+        } else if(bmi < 30) {
+            progressValue = 50 + ((bmi - 25) / (30 - 25)) * 25;
+        } else {
+            progressValue = 75 + (Math.min((bmi - 30) / 20, 1) * 25);
+        }
+        
+        setTimeout(() => {
+            document.querySelector('.progress-bar').style.width = progressValue + '%';
+        }, 300);
+    });
+</script>
+{% endblock %}
