@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,14 +74,11 @@ WSGI_APPLICATION = 'bmi_calculator.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-
-
-# Replace SQLite with PostgreSQL
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('postgresql://bmi_user:lnic38HpPzEOcP0Oej3fwvGauKazCpVr@dpg-d06b0nbuibrs73edbu20-a/bmi_db_jr4e'),
-        conn_max_age=600  # Optional: improves performance
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
